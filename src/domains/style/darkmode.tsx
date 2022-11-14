@@ -59,3 +59,47 @@ export function canvasDrawRectangle(
 		ctx.stroke();
 	}
 }
+
+export const blockingSetInitialColorMode = `(function() {
+	${setInferredColorMode.toString()}
+	setInferredColorMode();
+})()
+
+// IIFE!
+`;
+
+function setInferredColorMode() {
+	function getInferredtColorMode() {
+		const persistedColorPreference = window.localStorage.getItem("theme");
+		const hasPersistedPreference = typeof persistedColorPreference === "string";
+		/**
+		 * If the user has explicitly chosen light or dark,
+		 * use it. Otherwise, this value will be null.
+		 */
+		if (hasPersistedPreference) {
+			return persistedColorPreference;
+		}
+
+		/**
+		 * If they haven't been explicit, check the media query
+		 */
+		const mql = window.matchMedia("(prefers-color-scheme: dark)");
+		const hasMediaQueryPreference = typeof mql.matches === "boolean";
+
+		if (hasMediaQueryPreference) {
+			return mql.matches ? "dark" : "light";
+		}
+
+		/**
+		 * If they are using a browser/OS that doesn't support
+		 * color themes, default to 'light'.
+		 */
+		return "light";
+	}
+
+	const colorMode = getInferredtColorMode();
+	const root = document.documentElement;
+	root.style.setProperty("--initial-color-mode", colorMode);
+
+	if (colorMode === "dark") document.documentElement.setAttribute("data-theme", "dark");
+}

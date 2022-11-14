@@ -10,9 +10,12 @@ import { withPlausibleProxy } from "next-plausible";
 process.env.SITE_URL = process.env.SITE_URL || process.env.VERCEL_URL || "https://sreetamdas.com";
 const SENTRY_DSN = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
 
+/** @type {import('next').NextConfig} */
 const moduleExports = withPlausibleProxy()({
+	experimental: {
+		appDir: true,
+	},
 	compiler: {
-		// ssr and displayName are configured by default
 		styledComponents: true,
 	},
 	sentry: {
